@@ -1,69 +1,73 @@
-/*
-Following is the class structure of the Node class:
+#include <bits/stdc++.h>
 
-class Node
-{
-public:
-    int data;
-    Node *next;
-    Node()
-    {
-        this->data = 0;
-        next = NULL;
+/************************************************************
+
+    Following is the linked list node structure.
+    
+    template <typename T>
+    class Node {
+        public:
+        T data;
+        Node* next;
+
+        Node(T data) {
+            next = NULL;
+            this->data = data;
+        }
+
+        ~Node() {
+            if (next != NULL) {
+                delete next;
+            }
+        }
+    };
+
+************************************************************/
+Node<int>* solve(Node<int>* first,Node<int>*second){
+    //if only one element is present in a list
+    if(first->next==NULL){
+        first->next=second;
+        return first;
     }
-    Node(int data)
-    {
-        this->data = data; 
-        this->next = NULL;
+    Node<int>* curr1=first;
+    Node<int>* next1=curr1->next;
+    Node<int>*curr2=second;
+    Node<int>* next2=curr2->next;;
+    while(next1 !=NULL && curr2 !=NULL){
+        if(curr2->data>=curr1->data &&curr2->data<=next1->data){
+            // Add node in betweeen the list
+            curr1->next=curr2;
+            next2=curr2->next;
+            curr2->next=next1;
+            //Update pointers
+            curr1=curr2;
+            curr2=next2;
+             
+        }
+        else{
+            curr1=next1;
+            next1=next1->next;
+            if(next1 ==NULL){
+                curr1->next=curr2;
+                return first;
+            }
+            
+        }
     }
-    Node(int data, Node* next)
-    {
-        this->data = data;
-        this->next = next;
-    }
-};
-*/
-void populate(Node*&tail,Node* curr){
-    tail->next=curr;
-    tail=curr;
+    return first;
 }
-
-Node* sortList(Node *head){
-    Node* zerohead=new Node(-1);
-    Node* zerotail=zerohead;
-    Node* onehead=new Node(-1);
-    Node* onetail=onehead;
-    Node*twohead=new Node(-1);
-    Node* twotail=twohead;
-    Node* curr=head;
-    // Create seprate list 0s,1s and 2s
-    while(curr!=NULL){
-        int value=curr->data;
-        if(value==0){
-            populate(zerotail,curr);
-        }
-        else if(value==1){
-            populate(onetail,curr);
-        }
-        else if(value==2){
-            populate(twotail,curr);
-        }
-        curr=curr->next;
+Node<int>* sortTwoLists(Node<int>* first, Node<int>* second)
+{
+    if(first==NULL){
+        return second;
     }
-    //Merge the seprate list
-    if(onehead->next!=NULL){
-        zerotail->next=onehead->next;
+    if(second==NULL){
+        return first;
+    }
+    if(first->data<= second->data){
+        return solve(first,second);
     }
     else{
-        zerotail=twohead->next;
+       return  solve(second,first);
     }
-    onetail->next=twohead->next;
-    twotail->next=NULL;
-    //setup head
-    head=zerohead->next;
-    delete zerohead;
-    delete onehead;
-    delete twohead;
-
-    return head;
 }
